@@ -1,30 +1,27 @@
-// This is a basic Flutter widget test.
-//
-// To perform an interaction with a widget in your test, use the WidgetTester
-// utility in the flutter_test package. For example, you can send tap and scroll
-// gestures. You can also use WidgetTester to find child widgets in the widget
-// tree, read text, and verify that the values of widget properties are correct.
-
-import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 
-import 'package:bookverse/main.dart';
+import 'package:bookverse/models/book.dart';
 
 void main() {
-  testWidgets('Counter increments smoke test', (WidgetTester tester) async {
-    // Build our app and trigger a frame.
-    await tester.pumpWidget(const BookVerseApp());
+  test('book data round trips through Firestore fields', () {
+    final book = Book.fromMap('firestore-id', {
+      'title': 'Cloud Databases',
+      'author': 'A. Student',
+      'size': '2 MB',
+      'date': '2026-10-19',
+      'category': 'Educational',
+      'description': 'Database concepts and examples.',
+      'content': 'Chapter content.',
+      'pdfUrl': 'https://example.com/book.pdf',
+      'page': 12,
+      'total': 100,
+      'color': 0xFF3155C8,
+      'rating': 4.8,
+    });
 
-    // Verify that our counter starts at 0.
-    expect(find.text('0'), findsOneWidget);
-    expect(find.text('1'), findsNothing);
-
-    // Tap the '+' icon and trigger a frame.
-    await tester.tap(find.byIcon(Icons.add));
-    await tester.pump();
-
-    // Verify that our counter has incremented.
-    expect(find.text('0'), findsNothing);
-    expect(find.text('1'), findsOneWidget);
+    expect(book.id, 'firestore-id');
+    expect(book.progress, 0.12);
+    expect(Book.fromMap(book.id, book.toMap()).content, 'Chapter content.');
+    expect(book.toMap()['pdfUrl'], 'https://example.com/book.pdf');
   });
 }
